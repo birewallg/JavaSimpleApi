@@ -3,11 +3,11 @@ package local.ts3snet.entity;
 import java.sql.Date;
 
 public class User {
-    public Integer id;
-    public String login;
-    public String name;
-    public Date data;
-    public Integer age;
+    private Integer id;
+    private String login;
+    private String name;
+    private Date data;
+    private Integer age;
 
     public User () {}
     public User(String login, String name, long data, int age) {

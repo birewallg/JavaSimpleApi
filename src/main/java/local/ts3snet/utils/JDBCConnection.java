@@ -5,15 +5,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class JDBCConnection {
-    private static Logger log = Logger.getLogger(JDBCConnection.class.getName());
+    private static final Logger logger = Logger.getLogger(JDBCConnection.class.getName());
 
     static {
         try {
-            Class.forName( DBConstants.DRIVER_NAME );
-            log.info("SQL driver loaded!");
+            Class.forName( DBConfig.DRIVER_NAME );
+            logger.info("SQL driver loaded!");
         }
         catch ( ClassNotFoundException e ) {
-            log.log(Level.WARNING, "Driver class not found" );
+            logger.log(Level.WARNING, "Driver class not found" );
         }
     }
 
@@ -21,7 +21,7 @@ public class JDBCConnection {
     }
 
     public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(DBConstants.URL, DBConstants.USERNAME, DBConstants.PASSWORD);
+        return DriverManager.getConnection(DBConfig.URL, DBConfig.USERNAME, DBConfig.PASSWORD);
     }
 
     public static void close(Connection connection ) throws SQLException {

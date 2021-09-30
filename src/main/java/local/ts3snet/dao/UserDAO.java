@@ -6,11 +6,13 @@ import local.ts3snet.utils.JDBCConnection;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * CRUD
+ */
 public class UserDAO implements DAO<User, String>{
     private static final String INSERT_QUERY = "INSERT INTO USERS (login, name, date, age) VALUES (?, ?, ?, ?)";
     private static final String SELECT_QUERY = "SELECT id, login, name, date, age FROM USERS WHERE login = (?)";
@@ -27,6 +29,8 @@ public class UserDAO implements DAO<User, String>{
 
     @Override
     public boolean create(User user) {
+        if (read(user.getLogin()).getId() == -1)
+            return false;
         try (PreparedStatement statement = connection.prepareStatement(INSERT_QUERY)) {
             statement.setString(1, user.getLogin());
             statement.setString(2, user.getName());
@@ -85,12 +89,15 @@ public class UserDAO implements DAO<User, String>{
 
     @Override
     public boolean update(User user) {
+        if (read(user.getLogin()).getId() == -1)
+            return false;
         try (PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)) {
             statement.setString(1, user.getName());
             statement.setDate(2, user.getData());
             statement.setInt(3, user.getAge());
             statement.setString(4, user.getLogin());
-            return statement.executeQuery().next();
+            int id = statement.executeUpdate();
+            return id > 0;
         } catch (SQLException e) {
             logger.log(Level.WARNING, e.getMessage());
         }
@@ -102,7 +109,8 @@ public class UserDAO implements DAO<User, String>{
         try (PreparedStatement statement = connection.prepareStatement(DELETE_QUERY)) {
             statement.setInt(1, user.getId());
             statement.setString(2, user.getLogin());
-            return statement.executeQuery().next();
+            int id = statement.executeUpdate();
+            return id > 0;
         } catch (SQLException e) {
             logger.log(Level.WARNING, e.getMessage());
         }
