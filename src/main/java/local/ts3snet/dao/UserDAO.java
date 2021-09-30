@@ -14,11 +14,11 @@ import java.util.logging.Logger;
  * CRUD
  */
 public class UserDAO implements DAO<User, String>{
-    private static final String INSERT_QUERY = "INSERT INTO USERS (login, name, date, age) VALUES (?, ?, ?, ?)";
-    private static final String SELECT_QUERY = "SELECT id, login, name, date, age FROM USERS WHERE login = (?)";
+    private static final String INSERT_QUERY = "INSERT INTO USERS (login, name, lastname, age) VALUES (?, ?, ?, ?)";
+    private static final String SELECT_QUERY = "SELECT id, login, name, lastname, age FROM USERS WHERE login = (?)";
     private static final String SELECT_ALL_QUERY = "SELECT * FROM USERS";
     private static final String DELETE_QUERY = "DELETE FROM USERS WHERE login = (?)";
-    private static final String UPDATE_QUERY = "UPDATE USERS SET name = (?), date = (?), age = (?) WHERE login = (?)";
+    private static final String UPDATE_QUERY = "UPDATE USERS SET name = (?), lastname = (?), age = (?) WHERE login = (?)";
 
     Logger logger = Logger.getLogger(UserDAO.class.getName());
 
@@ -34,7 +34,7 @@ public class UserDAO implements DAO<User, String>{
         try (PreparedStatement statement = connection.prepareStatement(INSERT_QUERY)) {
             statement.setString(1, user.getLogin());
             statement.setString(2, user.getName());
-            statement.setDate(3, user.getData());
+            statement.setString(3, user.getLastname());
             statement.setInt(4, user.getAge());
             int id = statement.executeUpdate();
 
@@ -57,7 +57,7 @@ public class UserDAO implements DAO<User, String>{
                 result.setId(Integer.parseInt(rs.getString("id")));
                 result.setLogin(login);
                 result.setName(rs.getString("name"));
-                result.setData(rs.getDate("date"));
+                result.setLastname(rs.getString("lastname"));
                 result.setAge(Integer.parseInt(rs.getString("age")));
             }
         } catch (SQLException e) {
@@ -76,7 +76,7 @@ public class UserDAO implements DAO<User, String>{
                 user.setId(Integer.parseInt(rs.getString("id")));
                 user.setLogin(rs.getString("login"));
                 user.setName(rs.getString("name"));
-                user.setData(rs.getDate("date"));
+                user.setLastname(rs.getString("lastname"));
                 user.setAge(Integer.parseInt(rs.getString("age")));
                 allUsers.add(user);
             }
@@ -93,7 +93,7 @@ public class UserDAO implements DAO<User, String>{
             return false;
         try (PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)) {
             statement.setString(1, user.getName());
-            statement.setDate(2, user.getData());
+            statement.setString(2, user.getLastname());
             statement.setInt(3, user.getAge());
             statement.setString(4, user.getLogin());
             int id = statement.executeUpdate();

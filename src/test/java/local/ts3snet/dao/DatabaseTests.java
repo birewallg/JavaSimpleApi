@@ -17,11 +17,13 @@ public class DatabaseTests {
         user = new User();
         user.setLogin("test");
         user.setName("testName");
+
         repo.create(user);
     }
 
     @Test
     public void readTest() {
+
         User local = repo.read("test");
         assertEquals(local.getLogin(), user.getLogin());
     }

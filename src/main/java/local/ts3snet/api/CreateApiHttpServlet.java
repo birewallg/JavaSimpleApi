@@ -61,11 +61,15 @@ public class CreateApiHttpServlet extends HttpServlet {
             // set data
             user.setLogin(login);
             Set<String> param = req.getParameterMap().keySet();
-            param.forEach(k -> {
+            for(String k : param) {
                 String v = req.getParameter(k);
                 if (!v.equals(""))
-                    user.build(k, v);
-            });
+                    if (!user.build(k, v)) {
+                        logger.log(Level.WARNING, "SC_CONFLICT");
+                        resp.sendError(HttpServletResponse.SC_CONFLICT);
+                        return;
+                    }
+            }
             // create User
             if (repository.create(user))
                 resp.getWriter().println(repository.read(login));
@@ -87,7 +91,7 @@ public class CreateApiHttpServlet extends HttpServlet {
         try(Connection connection = JDBCConnection.getConnection();
             Statement statement = connection.createStatement()) {
             String sql =  "CREATE TABLE IF NOT EXISTS  USERS " +
-                    "(id INTEGER AUTO_INCREMENT, login VARCHAR(255), name VARCHAR(255), date DATE, age INTEGER, " +
+                    "(id INTEGER AUTO_INCREMENT, login VARCHAR(255), name VARCHAR(255), lastname VARCHAR(255), age INTEGER, " +
                     "PRIMARY KEY ( login ))";
             statement.execute(sql);
         } catch(Exception se) {
@@ -96,9 +100,9 @@ public class CreateApiHttpServlet extends HttpServlet {
         // add users
         try {
             UserDAO repository = new UserDAO();
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 40; i++) {
                 int r = new Random().nextInt(10) + 15;
-                repository.create(new User("name"+i, "" + r, System.currentTimeMillis(), r));
+                repository.create(new User("name"+i, "" + r, "lastname_" + ((r > 20)? "ov" : "en"), r));
             }
             resp.getWriter().println(repository.readAll().toString());
         } catch (SQLException exception) {

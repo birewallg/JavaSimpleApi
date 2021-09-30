@@ -56,11 +56,16 @@ public class ModifyApiHttpServlet extends HttpServlet {
             }
             // set new data
             Set<String> param = req.getParameterMap().keySet();
-            param.forEach(k -> {
+            for(String k : param) {
                 String v = req.getParameter(k);
-                if (!v.equals(""))
-                    user.build(k, v);
-            });
+                if (!v.equals("")) {
+                    if (!user.build(k, v)) {
+                        logger.log(Level.WARNING, "SC_CONFLICT");
+                        resp.sendError(HttpServletResponse.SC_CONFLICT);
+                        return;
+                    }
+                }
+            }
             // update Entity
             if (repository.update(user)) {
                 resp.getWriter().println(user);

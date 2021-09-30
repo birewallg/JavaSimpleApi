@@ -8,36 +8,28 @@ public class User {
     private Integer id;
     private String login;
     private String name;
-    private Date data;
+    private String lastname;
     private Integer age;
 
     public User () {
         this.login = "login";
         this.name = "name";
-        this.data = new Date(System.currentTimeMillis());
+        this.lastname = "lastname";
         this.age = 0;
     }
-    public User(String login, String name, long data, int age) {
+    public User(String login, String name, String lastname, int age) {
         this.login = login;
         this.name = name;
-        this.data = new Date(data);
+        this.lastname = lastname;
         this.age = age;
     }
 
     @Override
     public String toString() {
         return new Gson().toJson(this);
-       /* return '{' +
-                "\"id\": " + id +
-                ", \"login\": \"" + login + "\"" +
-                ", \"name\": \"" + name + "\"" +
-                ", \"data\": \"" + data + "\"" +
-                ", \"age\": " + age +
-                '}'
-        */
     }
 
-    public void build(String k, Object v) {
+    public boolean build(String k, Object v) {
         try {
             switch (k) {
                 case "name": {
@@ -45,17 +37,21 @@ public class User {
                     break;
                 }
                 case "data": {
-                    this.data = new Date((long) v);
+                    this.lastname = (String) v;
                     break;
                 }
                 case "age": {
+                    if ((int) v < 0)
+                        return false;
                     this.age = (int) v;
                     break;
                 }
                 default:
             }
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
+            return false;
         }
     }
     public Integer getId() {
@@ -82,12 +78,12 @@ public class User {
         this.name = name;
     }
 
-    public Date getData() {
-        return data;
+    public String getLastname() {
+        return lastname;
     }
 
-    public void setData(Date data) {
-        this.data = data;
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
     }
 
     public Integer getAge() {
