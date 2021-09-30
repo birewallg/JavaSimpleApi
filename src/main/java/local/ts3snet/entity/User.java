@@ -28,6 +28,23 @@ public class User {
                 '}';
     }
 
+    public void build(String k, Object v) {
+        switch (k) {
+            case "name": {
+                this.name = (String) v;
+                break;
+            }
+            case "data": {
+                this.data = new Date((long) v);
+                break;
+            }
+            case "age": {
+                this.age = (int) v;
+                break;
+            }
+            default:
+        }
+    }
     public Integer getId() {
         return id;
     }
@@ -67,4 +84,5 @@ public class User {
     public void setAge(Integer age) {
         this.age = age;
     }
+
 }
