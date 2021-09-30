@@ -29,7 +29,7 @@ public class PresentationApiHttpServlet extends HttpServlet {
     /**
      * Show users
      * GET/app/api/users
-     * GET/app/api/users/login
+     * GET/app/api/users/{login}
      */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {

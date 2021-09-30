@@ -29,7 +29,7 @@ public class ModifyApiHttpServlet extends HttpServlet {
 
     /**
      * Edit user metadata
-     * UPDATE/api/edit/login?name=string&date=long&age=int
+     * GET/api/edit/{login}?name=string&date=long&age=int
      */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -74,7 +74,7 @@ public class ModifyApiHttpServlet extends HttpServlet {
 
     /**
      * Delete user from database
-     * DELETE/api/edit/login
+     * DELETE/api/edit/{login}
      */
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {

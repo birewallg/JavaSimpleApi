@@ -33,7 +33,7 @@ public class CreateApiHttpServlet extends HttpServlet {
 
     /**
      * Add user
-     * GET/api/new/login?name=string&date=long&age=int
+     * GET/api/new/{login}?name=string&date=long&age=int
      */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
