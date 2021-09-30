@@ -17,7 +17,7 @@ public class UserDAO implements DAO<User, String>{
     private static final String INSERT_QUERY = "INSERT INTO USERS (login, name, date, age) VALUES (?, ?, ?, ?)";
     private static final String SELECT_QUERY = "SELECT id, login, name, date, age FROM USERS WHERE login = (?)";
     private static final String SELECT_ALL_QUERY = "SELECT * FROM USERS";
-    private static final String DELETE_QUERY = "DELETE FROM USERS WHERE id = (?) AND login = (?)";
+    private static final String DELETE_QUERY = "DELETE FROM USERS WHERE login = (?)";
     private static final String UPDATE_QUERY = "UPDATE USERS SET name = (?), date = (?), age = (?) WHERE login = (?)";
 
     Logger logger = Logger.getLogger(UserDAO.class.getName());
@@ -109,8 +109,8 @@ public class UserDAO implements DAO<User, String>{
         if (read(user.getLogin()).getId() == -1)
             return false;
         try (PreparedStatement statement = connection.prepareStatement(DELETE_QUERY)) {
-            statement.setInt(1, user.getId());
-            statement.setString(2, user.getLogin());
+            //statement.setInt(1, user.getId())
+            statement.setString(1, user.getLogin());
             int id = statement.executeUpdate();
             return id > 0;
         } catch (SQLException e) {
