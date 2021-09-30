@@ -34,7 +34,6 @@ public class App {
             String sql =  "CREATE TABLE IF NOT EXISTS  USERS " +
                     "(id INTEGER AUTO_INCREMENT, login VARCHAR(255), name VARCHAR(255), date DATE, age INTEGER, " +
                     "PRIMARY KEY ( login ))";
-
             statement.execute(sql);
             log.info("Created table in db...");
         } catch(Exception se) {

@@ -15,7 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @WebServlet(
-        name = "show",
+        name = "PresentationApiHttpServlet",
         urlPatterns = {"/api/users/*"})
 public class PresentationApiHttpServlet extends HttpServlet {
     private final Logger logger = Logger.getLogger(PresentationApiHttpServlet.class.getName());
@@ -33,6 +33,7 @@ public class PresentationApiHttpServlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        // get all users
         String path = req.getPathInfo();
         if (path == null || path.equals("/")) {
             try {
@@ -45,7 +46,7 @@ public class PresentationApiHttpServlet extends HttpServlet {
                 return;
             }
         }
-
+        // get user by login
         String[] paths = req.getPathInfo().split("/");
         if (paths.length != 2) {
             logger.log(Level.WARNING, "SC_BAD_REQUEST");

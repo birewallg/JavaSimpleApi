@@ -16,7 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @WebServlet(
-        name = "edit",
+        name = "ModifyApiHttpServlet",
         urlPatterns = {"/api/edit/*"})
 public class ModifyApiHttpServlet extends HttpServlet {
     private final Logger logger = Logger.getLogger(ModifyApiHttpServlet.class.getName());
@@ -29,6 +29,7 @@ public class ModifyApiHttpServlet extends HttpServlet {
 
     /**
      * Edit user metadata
+     * UPDATE/api/edit/login?name=string&date=long&age=int
      */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -44,31 +45,36 @@ public class ModifyApiHttpServlet extends HttpServlet {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
-        User user;
         try {
-            String login = paths[1];
+            // get Entity
             UserDAO repository = new UserDAO();
-            user = repository.read(login);
-            if (user.getId() == -1)
+            String login = paths[1];
+            User user = repository.read(login);
+            if (user.getId() == -1) {
+                resp.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
+            }
+            // set new data
             Set<String> param = req.getParameterMap().keySet();
             param.forEach(k -> {
                 String v = req.getParameter(k);
                 if (!v.equals(""))
                     user.build(k, v);
             });
-            if (repository.update(user))
+            // update Entity
+            if (repository.update(user)) {
                 resp.getWriter().println(user);
-            else
+            } else
                 resp.sendError(HttpServletResponse.SC_NOT_FOUND);
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-            return;
+        } catch (SQLException e) {
+            logger.log(Level.WARNING, e.getMessage());
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
     /**
      * Delete user from database
+     * DELETE/api/edit/login
      */
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {

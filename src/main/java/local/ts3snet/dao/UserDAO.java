@@ -29,7 +29,7 @@ public class UserDAO implements DAO<User, String>{
 
     @Override
     public boolean create(User user) {
-        if (read(user.getLogin()).getId() == -1)
+        if (read(user.getLogin()).getId() != -1)
             return false;
         try (PreparedStatement statement = connection.prepareStatement(INSERT_QUERY)) {
             statement.setString(1, user.getLogin());
@@ -106,6 +106,8 @@ public class UserDAO implements DAO<User, String>{
 
     @Override
     public boolean delete(User user) {
+        if (read(user.getLogin()).getId() == -1)
+            return false;
         try (PreparedStatement statement = connection.prepareStatement(DELETE_QUERY)) {
             statement.setInt(1, user.getId());
             statement.setString(2, user.getLogin());

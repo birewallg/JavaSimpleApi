@@ -1,5 +1,7 @@
 package local.ts3snet.entity;
 
+import com.google.gson.Gson;
+
 import java.sql.Date;
 
 public class User {
@@ -9,7 +11,12 @@ public class User {
     private Date data;
     private Integer age;
 
-    public User () {}
+    public User () {
+        this.login = "login";
+        this.name = "name";
+        this.data = new Date(System.currentTimeMillis());
+        this.age = 0;
+    }
     public User(String login, String name, long data, int age) {
         this.login = login;
         this.name = name;
@@ -19,30 +26,36 @@ public class User {
 
     @Override
     public String toString() {
-        return '{' +
+        return new Gson().toJson(this);
+       /* return '{' +
                 "\"id\": " + id +
                 ", \"login\": \"" + login + "\"" +
                 ", \"name\": \"" + name + "\"" +
                 ", \"data\": \"" + data + "\"" +
                 ", \"age\": " + age +
-                '}';
+                '}'
+        */
     }
 
     public void build(String k, Object v) {
-        switch (k) {
-            case "name": {
-                this.name = (String) v;
-                break;
+        try {
+            switch (k) {
+                case "name": {
+                    this.name = (String) v;
+                    break;
+                }
+                case "data": {
+                    this.data = new Date((long) v);
+                    break;
+                }
+                case "age": {
+                    this.age = (int) v;
+                    break;
+                }
+                default:
             }
-            case "data": {
-                this.data = new Date((long) v);
-                break;
-            }
-            case "age": {
-                this.age = (int) v;
-                break;
-            }
-            default:
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
     public Integer getId() {
