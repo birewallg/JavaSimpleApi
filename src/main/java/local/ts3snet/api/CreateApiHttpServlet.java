@@ -1,5 +1,6 @@
 package local.ts3snet.api;
 
+import com.google.gson.Gson;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -10,6 +11,7 @@ import local.ts3snet.dao.UserDAO;
 import local.ts3snet.entity.User;
 import local.ts3snet.utils.JDBCConnection;
 
+import javax.security.auth.login.AccountNotFoundException;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -24,7 +26,7 @@ import java.util.logging.Logger;
         urlPatterns = {"/api/new/*"})
 public class CreateApiHttpServlet extends HttpServlet {
     private final Logger logger = Logger.getLogger(CreateApiHttpServlet.class.getName());
-
+    Gson gson = new Gson();
     @Override
     public void init(ServletConfig config) throws ServletException {
         logger.info("Servlet init");
@@ -53,15 +55,21 @@ public class CreateApiHttpServlet extends HttpServlet {
             // get User
             UserDAO repository = new UserDAO();
             String login = paths[1];
-            User user = repository.read(login);
-            if (user.getId() != -1) {
+
+            try {
+                if (repository.read(login) != null)
+                    throw new IllegalArgumentException();
+            } catch (AccountNotFoundException e) {
+                logger.info("User not found. Create new user ..");
+            } catch (IllegalArgumentException e) {
                 resp.sendError(HttpServletResponse.SC_CONFLICT);
                 return;
             }
+            User user = new User();
             // set data
             user.setLogin(login);
             Set<String> param = req.getParameterMap().keySet();
-            for(String k : param) {
+            for (String k : param) {
                 String v = req.getParameter(k);
                 if (!v.equals(""))
                     if (!user.build(k, v)) {
@@ -71,10 +79,11 @@ public class CreateApiHttpServlet extends HttpServlet {
                     }
             }
             // create User
-            if (repository.create(user))
-                resp.getWriter().println(repository.read(login));
-            else
-                resp.sendError(HttpServletResponse.SC_CONFLICT);
+            repository.create(user);
+            resp.getWriter().println(repository.read(login));
+        } catch (AccountNotFoundException e) {
+            logger.log(Level.WARNING, e.getMessage());
+            resp.sendError(HttpServletResponse.SC_CONFLICT);
         } catch (SQLException e) {
             logger.log(Level.WARNING, e.getMessage());
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -102,9 +111,11 @@ public class CreateApiHttpServlet extends HttpServlet {
             UserDAO repository = new UserDAO();
             for (int i = 0; i < 40; i++) {
                 int r = new Random().nextInt(10) + 15;
-                repository.create(new User("name"+i, "" + r, "lastname_" + ((r > 20)? "ov" : "en"), r));
+                repository.create(new User("name" + i, "" + r, "lastname_" + ((r > 20) ? "ov" : "en"), r));
             }
             resp.getWriter().println(repository.readAll().toString());
+        } catch (AccountNotFoundException e) {
+            resp.sendError(HttpServletResponse.SC_CONFLICT);
         } catch (SQLException exception) {
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }

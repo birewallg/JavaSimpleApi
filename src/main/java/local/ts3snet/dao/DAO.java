@@ -1,11 +1,12 @@
 package local.ts3snet.dao;
 
+import javax.security.auth.login.AccountNotFoundException;
 import java.util.List;
 
 public interface DAO<Entity, Key> {
-    boolean create(Entity model);
-    Entity read(Key key);
+    boolean create(Entity model) throws AccountNotFoundException;
+    Entity read(Key key) throws ClassNotFoundException, AccountNotFoundException;
     List<Entity> readAll();
-    boolean update(Entity model);
-    boolean delete(Entity model);
+    boolean update(Entity model) throws AccountNotFoundException;
+    boolean delete(Entity model) throws AccountNotFoundException;
 }

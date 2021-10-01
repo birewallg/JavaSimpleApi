@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import local.ts3snet.dao.UserDAO;
 import local.ts3snet.entity.User;
 
+import javax.security.auth.login.AccountNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.logging.Level;
@@ -56,12 +57,10 @@ public class PresentationApiHttpServlet extends HttpServlet {
         try {
             UserDAO repository = new UserDAO();
             User user = repository.read(paths[1]);
-            if (user.getId() == -1) {
-                logger.log(Level.WARNING, "SC_NOT_FOUND");
-                resp.sendError(HttpServletResponse.SC_NOT_FOUND);
-                return;
-            }
             resp.getWriter().println(user);
+        } catch (AccountNotFoundException e) {
+            logger.log(Level.WARNING, "SC_NOT_FOUND");
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
         } catch (SQLException e) {
             logger.log(Level.WARNING, e.getMessage());
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

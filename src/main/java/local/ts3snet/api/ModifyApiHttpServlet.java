@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import local.ts3snet.dao.UserDAO;
 import local.ts3snet.entity.User;
 
+import javax.security.auth.login.AccountNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Set;
@@ -67,10 +68,12 @@ public class ModifyApiHttpServlet extends HttpServlet {
                 }
             }
             // update Entity
-            if (repository.update(user)) {
+            if (repository.update(user))
                 resp.getWriter().println(user);
-            } else
-                resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+            else throw new IOException("local");
+        } catch (AccountNotFoundException e){
+            logger.log(Level.WARNING, e.getMessage());
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
         } catch (SQLException e) {
             logger.log(Level.WARNING, e.getMessage());
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -85,9 +88,9 @@ public class ModifyApiHttpServlet extends HttpServlet {
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String path = req.getPathInfo();
         if (path == null || path.equals("/")) {
-                logger.log(Level.WARNING, "SC_BAD_REQUEST");
-                resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
-                return;
+            logger.log(Level.WARNING, "SC_BAD_REQUEST");
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return;
         }
         String[] paths = req.getPathInfo().split("/");
         if (paths.length != 2) {
@@ -101,8 +104,10 @@ public class ModifyApiHttpServlet extends HttpServlet {
             User user = repository.read(login);
             if (repository.delete(user))
                 resp.getWriter().println(user);
-            else
-                resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+            else  throw new IOException("local");
+        } catch (AccountNotFoundException e){
+            logger.log(Level.WARNING, e.getMessage());
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
         } catch (SQLException e) {
             logger.log(Level.WARNING, e.getMessage());
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

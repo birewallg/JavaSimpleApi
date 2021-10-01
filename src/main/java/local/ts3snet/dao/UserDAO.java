@@ -3,6 +3,7 @@ package local.ts3snet.dao;
 import local.ts3snet.entity.User;
 import local.ts3snet.utils.JDBCConnection;
 
+import javax.security.auth.login.AccountNotFoundException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,7 +21,7 @@ public class UserDAO implements DAO<User, String>{
     private static final String DELETE_QUERY = "DELETE FROM USERS WHERE login = (?)";
     private static final String UPDATE_QUERY = "UPDATE USERS SET name = (?), lastname = (?), age = (?) WHERE login = (?)";
 
-    Logger logger = Logger.getLogger(UserDAO.class.getName());
+    private final Logger logger = Logger.getLogger(UserDAO.class.getName());
 
     private final Connection connection;
     public UserDAO() throws SQLException {
@@ -28,25 +29,29 @@ public class UserDAO implements DAO<User, String>{
     }
 
     @Override
-    public boolean create(User user) {
-        if (read(user.getLogin()).getId() != -1)
-            return false;
-        try (PreparedStatement statement = connection.prepareStatement(INSERT_QUERY)) {
-            statement.setString(1, user.getLogin());
-            statement.setString(2, user.getName());
-            statement.setString(3, user.getLastname());
-            statement.setInt(4, user.getAge());
-            int id = statement.executeUpdate();
+    public boolean create(User user) throws AccountNotFoundException {
+        // check user in database throw AccountNotFoundException
+        try {
+            read(user.getLogin());
+        } catch (AccountNotFoundException e) {
+            try (PreparedStatement statement = connection.prepareStatement(INSERT_QUERY)) {
+                statement.setString(1, user.getLogin());
+                statement.setString(2, user.getName());
+                statement.setString(3, user.getLastname());
+                statement.setInt(4, user.getAge());
+                int id = statement.executeUpdate();
 
-            return id > 0;
-        } catch (SQLException e) {
-            logger.log(Level.WARNING, e.getMessage());
-            return false;
+                return id > 0;
+            } catch (SQLException sqlException) {
+                logger.log(Level.WARNING, sqlException.getMessage());
+                throw new IllegalArgumentException();
+            }
         }
+        throw new AccountNotFoundException();
     }
 
     @Override
-    public User read(String login) {
+    public User read(String login) throws IllegalArgumentException, AccountNotFoundException {
         final User result = new User();
         result.setId(-1);
 
@@ -62,7 +67,11 @@ public class UserDAO implements DAO<User, String>{
             }
         } catch (SQLException e) {
             logger.log(Level.WARNING, e.getMessage());
+            throw new IllegalArgumentException();
         }
+
+        if (result.getId() == -1)
+            throw new AccountNotFoundException();
         return result;
     }
 
@@ -83,14 +92,15 @@ public class UserDAO implements DAO<User, String>{
             return allUsers;
         } catch (SQLException e) {
             logger.log(Level.WARNING, e.getMessage());
+            return Collections.emptyList();
         }
-        return Collections.emptyList();
     }
 
     @Override
-    public boolean update(User user) {
-        if (read(user.getLogin()).getId() == -1)
-            return false;
+    public boolean update(User user) throws AccountNotFoundException {
+        // check user in database throw AccountNotFoundException
+        read(user.getLogin());
+
         try (PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)) {
             statement.setString(1, user.getName());
             statement.setString(2, user.getLastname());
@@ -100,14 +110,15 @@ public class UserDAO implements DAO<User, String>{
             return id > 0;
         } catch (SQLException e) {
             logger.log(Level.WARNING, e.getMessage());
+            throw new IllegalArgumentException();
         }
-        return false;
     }
 
     @Override
-    public boolean delete(User user) {
-        if (read(user.getLogin()).getId() == -1)
-            return false;
+    public boolean delete(User user) throws AccountNotFoundException {
+        // check user in database throw AccountNotFoundException
+        read(user.getLogin());
+
         try (PreparedStatement statement = connection.prepareStatement(DELETE_QUERY)) {
             //statement.setInt(1, user.getId())
             statement.setString(1, user.getLogin());
@@ -115,7 +126,7 @@ public class UserDAO implements DAO<User, String>{
             return id > 0;
         } catch (SQLException e) {
             logger.log(Level.WARNING, e.getMessage());
+            throw new IllegalArgumentException();
         }
-        return false;
     }
 }
