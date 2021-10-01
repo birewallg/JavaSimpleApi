@@ -1,35 +1,36 @@
 package local.ts3snet.dao;
 
 import local.ts3snet.entity.User;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import javax.security.auth.login.AccountNotFoundException;
 
-public class DatabaseTests {
+import static org.junit.jupiter.api.Assertions.*;
 
-    UserDAO repo;
-    User user = null;
 
-    @Before
-    public void setUp() throws Exception {
+class DatabaseTests {
+
+    static UserDAO repo;
+    static User user = null;
+
+    @BeforeAll
+    static void setUp() throws Exception {
         repo = new UserDAO();
         user = new User();
         user.setLogin("test");
         user.setName("testName");
-
         repo.create(user);
     }
 
     @Test
-    public void readTest() {
-
+    void readTest() throws AccountNotFoundException {
         User local = repo.read("test");
         assertEquals(local.getLogin(), user.getLogin());
     }
 
     @Test
-    public void updateTest() {
+    void updateTest() throws AccountNotFoundException {
         User local = repo.read("test");
         local.setName("testUpdate");
         repo.update(local);
@@ -39,10 +40,8 @@ public class DatabaseTests {
     }
 
     @Test
-    public void deleteTest() {
+    void deleteTest() throws AccountNotFoundException {
         repo.delete(user);
-        User local = repo.read("test");
-        boolean b = (local.getId() == -1);
-        assertTrue(b);
+        assertThrows(AccountNotFoundException.class, () -> repo.read("test"));
     }
 }
