@@ -124,9 +124,9 @@ public class CreateApiHttpServlet extends HttpServlet {
         // add users
         try {
             UserDAO repository = new UserDAO();
-            for (int i = 0; i < 40; i++) {
+            for (int i = 0; i < 20; i++) {
                 int r = new Random().nextInt(10) + 15;
-                repository.create(new User("name" + i, "" + r, "lastname_" + ((r > 20) ? "ov" : "en"), r));
+                repository.create(new User("name" + i, "" + r, "lastname_" + ((r > 22) ? "ov" : "en"), r));
             }
             resp.getWriter().println(JsonTranslate.toJson(repository.readAll()));
         } catch (AccountNotFoundException e) {

@@ -33,7 +33,7 @@ class TasksHttpServletTests {
         user.setLogin("test");
         user.setLastname("test_en");
         user.setName("test_en");
-        user.setAge(21);
+        user.setAge(18);
         repo.create(user);
     }
     @AfterEach
@@ -41,8 +41,8 @@ class TasksHttpServletTests {
         repo.delete(user);
     }
     /**
-     * Test 1 | get all users where user.age > 20
-     * BODY contain list of users
+     * Test 1 | get number users where user.lastname is 'en'
+     * BODY contain number
      */
     @Test
     void doGet_Task_1() throws Exception {
@@ -58,16 +58,16 @@ class TasksHttpServletTests {
 
         new TasksApiHttpServlet().doGet(request, response);
 
-        Long users = new Gson().fromJson(String.valueOf(stringWriter), Long.class);
-        System.out.println(users);
+        Long number = new Gson().fromJson(String.valueOf(stringWriter), Long.class);
+        System.out.println(number);
 
         printWriter.flush();
-        assertTrue(users > 0);
+        assertTrue(number > 0);
     }
 
     /**
-     * Test 2 | get all users where user.lastname is en
-     * BODY contain list of users
+     * Test 2 | get all user lastnames where user.age < 20
+     * BODY contain list of user lastnames
      */
     @Test
     void doGet_Task_2() throws Exception {

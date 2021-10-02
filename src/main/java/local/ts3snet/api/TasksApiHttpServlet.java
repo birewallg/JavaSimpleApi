@@ -55,24 +55,26 @@ public class TasksApiHttpServlet extends HttpServlet {
             List<User> list = repository.readAll();
             List<User> result = new LinkedList<>();
             switch (paths[1]) {
-                // test 1 | get number users where user.age > 20
+                // test 1 | get number users where user.lastname is 'en'
                 case "1": {
                     long count = list.stream()
-                            .map(User::getAge)
-                            .filter(age -> age > 20)
+                            .map(User::getLastname)
+                            .filter(lastname -> lastname.endsWith("en"))
                             .count();
                     resp.getWriter().println(JsonTranslate.toJson(count));
                     break;
                 }
-                // test 1 | get all user lastnames where user.lastname is en
+                // test 2 | get all user lastnames where user.age < 20
                 case "2": {
-                    List<String> lastnames = list.stream().map(User::getLastname)
-                            .filter(lastname -> lastname.endsWith("en"))
+
+                    List<String> lastnames = list.stream()
+                            .filter(user -> user.getAge() < 20)
+                            .map(User::getLastname)
                             .collect(Collectors.toList());
+
                     resp.getWriter().println(JsonTranslate.toJson(lastnames));
                     break;
                 }
-
                 default: {
                     logger.log(Level.WARNING, "SC_BAD_REQUEST");
                     resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
