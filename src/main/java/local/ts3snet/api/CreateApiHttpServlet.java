@@ -1,6 +1,5 @@
 package local.ts3snet.api;
 
-import com.google.gson.Gson;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -26,7 +25,7 @@ import java.util.logging.Logger;
         urlPatterns = {"/api/new/*"})
 public class CreateApiHttpServlet extends HttpServlet {
     private final Logger logger = Logger.getLogger(CreateApiHttpServlet.class.getName());
-    Gson gson = new Gson();
+
     @Override
     public void init(ServletConfig config) throws ServletException {
         logger.info("Servlet init");
@@ -51,20 +50,26 @@ public class CreateApiHttpServlet extends HttpServlet {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
+        String login = paths[1];
+
+        try {
+            UserDAO repository = new UserDAO();
+            if (repository.read(login) != null)
+                throw new IllegalArgumentException();
+        } catch (AccountNotFoundException e) {
+            logger.info("User not found. Create new user ..");
+        } catch (IllegalArgumentException e) {
+            logger.info("This User already exists ..");
+            resp.sendError(HttpServletResponse.SC_CONFLICT);
+            return;
+        } catch (SQLException e) {
+            logger.log(Level.WARNING, e.getMessage());
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return;
+        }
         try {
             // get User
             UserDAO repository = new UserDAO();
-            String login = paths[1];
-
-            try {
-                if (repository.read(login) != null)
-                    throw new IllegalArgumentException();
-            } catch (AccountNotFoundException e) {
-                logger.info("User not found. Create new user ..");
-            } catch (IllegalArgumentException e) {
-                resp.sendError(HttpServletResponse.SC_CONFLICT);
-                return;
-            }
             User user = new User();
             // set data
             user.setLogin(login);
@@ -80,7 +85,7 @@ public class CreateApiHttpServlet extends HttpServlet {
             }
             // create User
             repository.create(user);
-            resp.getWriter().println(repository.read(login));
+            resp.getWriter().println(JsonRetranslator.toJson(repository.read(login)));
         } catch (AccountNotFoundException e) {
             logger.log(Level.WARNING, e.getMessage());
             resp.sendError(HttpServletResponse.SC_CONFLICT);
@@ -95,7 +100,15 @@ public class CreateApiHttpServlet extends HttpServlet {
      * HEAD/app/api/new
      */
     @Override
-    protected void doHead(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // clear table
+        try(Connection connection = JDBCConnection.getConnection();
+            Statement statement = connection.createStatement()) {
+            String sql =  "TRUNCATE TABLE USERS";
+            statement.execute(sql);
+        } catch(Exception se) {
+            logger.log(Level.WARNING, se.getMessage());
+        }
         // create table
         try(Connection connection = JDBCConnection.getConnection();
             Statement statement = connection.createStatement()) {
@@ -105,6 +118,8 @@ public class CreateApiHttpServlet extends HttpServlet {
             statement.execute(sql);
         } catch(Exception se) {
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            logger.log(Level.WARNING, se.getMessage());
+            return;
         }
         // add users
         try {
@@ -113,7 +128,7 @@ public class CreateApiHttpServlet extends HttpServlet {
                 int r = new Random().nextInt(10) + 15;
                 repository.create(new User("name" + i, "" + r, "lastname_" + ((r > 20) ? "ov" : "en"), r));
             }
-            resp.getWriter().println(repository.readAll().toString());
+            resp.getWriter().println(JsonRetranslator.toJson(repository.readAll()));
         } catch (AccountNotFoundException e) {
             resp.sendError(HttpServletResponse.SC_CONFLICT);
         } catch (SQLException exception) {

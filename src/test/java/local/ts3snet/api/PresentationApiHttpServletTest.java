@@ -14,7 +14,7 @@ import static org.mockito.Mockito.*;
 
 class PresentationApiHttpServletTest {
     /**
-     * Get all users
+     * Get all users test
      * BODY contain list of users
      */
     @Test
@@ -37,7 +37,7 @@ class PresentationApiHttpServletTest {
     }
 
     /**
-     * Select one user
+     * Select one user test
      * BODY contain user data
      */
     @Test

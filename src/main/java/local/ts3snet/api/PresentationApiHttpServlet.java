@@ -39,7 +39,7 @@ public class PresentationApiHttpServlet extends HttpServlet {
         if (path == null || path.equals("/")) {
             try {
                 UserDAO repository = new UserDAO();
-                resp.getWriter().println(repository.readAll().toString());
+                resp.getWriter().println(JsonRetranslator.toJson(repository.readAll()));
                 return;
             } catch (SQLException e) {
                 logger.log(Level.WARNING, e.getMessage());
@@ -57,7 +57,7 @@ public class PresentationApiHttpServlet extends HttpServlet {
         try {
             UserDAO repository = new UserDAO();
             User user = repository.read(paths[1]);
-            resp.getWriter().println(user);
+            resp.getWriter().println(JsonRetranslator.toJson(user));
         } catch (AccountNotFoundException e) {
             logger.log(Level.WARNING, "SC_NOT_FOUND");
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);

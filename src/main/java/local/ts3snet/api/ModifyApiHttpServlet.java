@@ -1,5 +1,6 @@
 package local.ts3snet.api;
 
+import com.google.gson.Gson;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -69,7 +70,7 @@ public class ModifyApiHttpServlet extends HttpServlet {
             }
             // update Entity
             if (repository.update(user))
-                resp.getWriter().println(user);
+                resp.getWriter().println(JsonRetranslator.toJson(user));
             else throw new IOException("local");
         } catch (AccountNotFoundException e){
             logger.log(Level.WARNING, e.getMessage());
@@ -103,8 +104,8 @@ public class ModifyApiHttpServlet extends HttpServlet {
             UserDAO repository = new UserDAO();
             User user = repository.read(login);
             if (repository.delete(user))
-                resp.getWriter().println(user);
-            else  throw new IOException("local");
+                resp.getWriter().println(JsonRetranslator.toJson(user));
+            else throw new IOException("local");
         } catch (AccountNotFoundException e){
             logger.log(Level.WARNING, e.getMessage());
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);

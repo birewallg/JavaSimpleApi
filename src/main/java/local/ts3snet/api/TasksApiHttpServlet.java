@@ -58,14 +58,14 @@ public class TasksApiHttpServlet extends HttpServlet {
                     list.stream()
                             .filter(u -> u.getAge() > 20)
                             .forEach(result::add);
-                    resp.getWriter().println(result);
+                    resp.getWriter().println(JsonRetranslator.toJson(result));
                     break;
                 }
                 case "2": {
                     list.stream()
                             .filter(u -> u.getLastname().endsWith("en"))
                             .forEach(result::add);
-                    resp.getWriter().println(result);
+                    resp.getWriter().println(JsonRetranslator.toJson(result));
                     break;
                 }
 

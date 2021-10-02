@@ -1,9 +1,8 @@
 package local.ts3snet.entity;
 
-import com.google.gson.Gson;
-
-import java.sql.Date;
-
+/**
+ * User Entity class
+ */
 public class User {
     private Integer id;
     private String login;
@@ -24,11 +23,6 @@ public class User {
         this.age = age;
     }
 
-    @Override
-    public String toString() {
-        return new Gson().toJson(this);
-    }
-
     public boolean build(String k, Object v) {
         try {
             switch (k) {
@@ -41,9 +35,9 @@ public class User {
                     break;
                 }
                 case "age": {
-                    if ((int) v < 0)
+                    if (Integer.parseInt((String)v) < 0)
                         return false;
-                    this.age = (int) v;
+                    this.age = Integer.parseInt((String)v);
                     break;
                 }
                 default:
