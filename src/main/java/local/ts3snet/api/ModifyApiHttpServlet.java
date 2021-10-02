@@ -54,6 +54,7 @@ public class ModifyApiHttpServlet extends HttpServlet {
             User user = repository.read(login);
             if (user.getId() == -1) {
                 resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+                logger.log(Level.WARNING, "SC_NOT_FOUND");
                 return;
             }
             // set new data
@@ -70,8 +71,8 @@ public class ModifyApiHttpServlet extends HttpServlet {
             }
             // update Entity
             if (repository.update(user))
-                resp.getWriter().println(JsonRetranslator.toJson(user));
-            else throw new IOException("local");
+                resp.getWriter().println(JsonRetranslator.toJson(repository.read(login)));
+            else throw new SQLException();
         } catch (AccountNotFoundException e){
             logger.log(Level.WARNING, e.getMessage());
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -105,7 +106,7 @@ public class ModifyApiHttpServlet extends HttpServlet {
             User user = repository.read(login);
             if (repository.delete(user))
                 resp.getWriter().println(JsonRetranslator.toJson(user));
-            else throw new IOException("local");
+            else throw new SQLException();
         } catch (AccountNotFoundException e){
             logger.log(Level.WARNING, e.getMessage());
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);

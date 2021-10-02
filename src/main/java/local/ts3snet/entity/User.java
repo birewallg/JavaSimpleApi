@@ -1,5 +1,7 @@
 package local.ts3snet.entity;
 
+import com.google.gson.Gson;
+
 /**
  * User Entity class
  */
@@ -16,6 +18,12 @@ public class User {
         this.lastname = "lastname";
         this.age = 0;
     }
+
+    @Override
+    public String toString() {
+        return new Gson().toJson(this);
+    }
+
     public User(String login, String name, String lastname, int age) {
         this.login = login;
         this.name = name;
@@ -30,7 +38,7 @@ public class User {
                     this.name = (String) v;
                     break;
                 }
-                case "data": {
+                case "lastname": {
                     this.lastname = (String) v;
                     break;
                 }

@@ -1,21 +1,25 @@
 package local.ts3snet.api;
 
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import local.ts3snet.entity.User;
 import org.junit.jupiter.api.Test;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class PresentationApiHttpServletTest {
     /**
      * Get all users test
      * BODY contain list of users
+     * if database is notnull
      */
     @Test
     void doGet_GetAllUsers() throws Exception {
@@ -30,10 +34,15 @@ class PresentationApiHttpServletTest {
         when(response.getWriter()).thenReturn(printWriter);
 
         new PresentationApiHttpServlet().doGet(request, response);
-        System.out.println(stringWriter);
+
+        List<User> users = new Gson().fromJson(
+                String.valueOf(stringWriter),
+                new TypeToken<List<User>>(){}.getType()
+        );
+        System.out.println(users);
 
         printWriter.flush();
-        assertTrue(stringWriter.toString().length() > 2);
+        assertFalse(users.isEmpty());
     }
 
     /**
@@ -45,7 +54,7 @@ class PresentationApiHttpServletTest {
         HttpServletResponse response = mock(HttpServletResponse.class);
         HttpServletRequest request = mock(HttpServletRequest.class);
 
-        when(request.getPathInfo()).thenReturn("/notuser");
+        when(request.getPathInfo()).thenReturn("/testuser");
 
         StringWriter stringWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(stringWriter);
@@ -53,9 +62,11 @@ class PresentationApiHttpServletTest {
         when(response.getWriter()).thenReturn(printWriter);
 
         new PresentationApiHttpServlet().doGet(request, response);
-        System.out.println(stringWriter);
+
+        User user = new Gson().fromJson(String.valueOf(stringWriter), User.class);
+        System.out.println(user);
 
         printWriter.flush();
-        assertFalse(stringWriter.toString().length() > 2);
+        assertEquals("testuser", user.getLogin());
     }
 }
