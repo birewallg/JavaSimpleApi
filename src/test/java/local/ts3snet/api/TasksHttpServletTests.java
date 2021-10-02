@@ -58,14 +58,11 @@ class TasksHttpServletTests {
 
         new TasksApiHttpServlet().doGet(request, response);
 
-        List<User> users = new Gson().fromJson(
-                String.valueOf(stringWriter),
-                new TypeToken<List<User>>(){}.getType()
-        );
+        Long users = new Gson().fromJson(String.valueOf(stringWriter), Long.class);
         System.out.println(users);
 
         printWriter.flush();
-        assertTrue(users.size() > 0);
+        assertTrue(users > 0);
     }
 
     /**
@@ -86,9 +83,9 @@ class TasksHttpServletTests {
 
         new TasksApiHttpServlet().doGet(request, response);
 
-        List<User> users = new Gson().fromJson(
+        List<String> users = new Gson().fromJson(
                 String.valueOf(stringWriter),
-                new TypeToken<List<User>>(){}.getType()
+                new TypeToken<List<String>>(){}.getType()
         );
         System.out.println(users);
 

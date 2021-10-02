@@ -15,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @WebServlet(
         name = "TasksApiHttpServlet",
@@ -54,20 +55,21 @@ public class TasksApiHttpServlet extends HttpServlet {
             List<User> list = repository.readAll();
             List<User> result = new LinkedList<>();
             switch (paths[1]) {
-                // test 1 | get all users where user.age > 20
+                // test 1 | get number users where user.age > 20
                 case "1": {
-                    list.stream()
-                            .filter(u -> u.getAge() > 20)
-                            .forEach(result::add);
-                    resp.getWriter().println(JsonTranslate.toJson(result));
+                    long count = list.stream()
+                            .map(User::getAge)
+                            .filter(age -> age > 20)
+                            .count();
+                    resp.getWriter().println(JsonTranslate.toJson(count));
                     break;
                 }
-                // test 1 | get all users where user.lastname is en
+                // test 1 | get all user lastnames where user.lastname is en
                 case "2": {
-                    list.stream()
-                            .filter(u -> u.getLastname().endsWith("en"))
-                            .forEach(result::add);
-                    resp.getWriter().println(JsonTranslate.toJson(result));
+                    List<String> lastnames = list.stream().map(User::getLastname)
+                            .filter(lastname -> lastname.endsWith("en"))
+                            .collect(Collectors.toList());
+                    resp.getWriter().println(JsonTranslate.toJson(lastnames));
                     break;
                 }
 
