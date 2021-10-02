@@ -14,10 +14,10 @@
 
 
 ### Test tasks
-    Get all users where user.age > 20
+    Get number users where user.age > 20
     GET /api/task/1
     
-    Get all users where user.lastname ands with 'en'
+    Get all user lastnames where user.lastname is 'en'
     GET /api/task/2
 
 
