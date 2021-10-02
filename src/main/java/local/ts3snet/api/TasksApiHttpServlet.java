@@ -59,7 +59,7 @@ public class TasksApiHttpServlet extends HttpServlet {
                     list.stream()
                             .filter(u -> u.getAge() > 20)
                             .forEach(result::add);
-                    resp.getWriter().println(JsonRetranslator.toJson(result));
+                    resp.getWriter().println(JsonTranslate.toJson(result));
                     break;
                 }
                 // test 1 | get all users where user.lastname is en
@@ -67,7 +67,7 @@ public class TasksApiHttpServlet extends HttpServlet {
                     list.stream()
                             .filter(u -> u.getLastname().endsWith("en"))
                             .forEach(result::add);
-                    resp.getWriter().println(JsonRetranslator.toJson(result));
+                    resp.getWriter().println(JsonTranslate.toJson(result));
                     break;
                 }
 

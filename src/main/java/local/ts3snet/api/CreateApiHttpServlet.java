@@ -85,7 +85,7 @@ public class CreateApiHttpServlet extends HttpServlet {
             }
             // create User
             repository.create(user);
-            resp.getWriter().println(JsonRetranslator.toJson(repository.read(login)));
+            resp.getWriter().println(JsonTranslate.toJson(repository.read(login)));
         } catch (AccountNotFoundException e) {
             logger.log(Level.WARNING, e.getMessage());
             resp.sendError(HttpServletResponse.SC_CONFLICT);
@@ -128,7 +128,7 @@ public class CreateApiHttpServlet extends HttpServlet {
                 int r = new Random().nextInt(10) + 15;
                 repository.create(new User("name" + i, "" + r, "lastname_" + ((r > 20) ? "ov" : "en"), r));
             }
-            resp.getWriter().println(JsonRetranslator.toJson(repository.readAll()));
+            resp.getWriter().println(JsonTranslate.toJson(repository.readAll()));
         } catch (AccountNotFoundException e) {
             resp.sendError(HttpServletResponse.SC_CONFLICT);
         } catch (SQLException exception) {

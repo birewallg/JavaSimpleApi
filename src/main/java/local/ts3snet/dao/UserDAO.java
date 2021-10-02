@@ -12,7 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * CRUD
+ * CRUD Operations
  */
 public class UserDAO implements DAO<User, String>{
     private static final String INSERT_QUERY = "INSERT INTO USERS (login, name, lastname, age) VALUES (?, ?, ?, ?)";

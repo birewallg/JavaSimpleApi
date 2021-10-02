@@ -70,7 +70,7 @@ public class ModifyApiHttpServlet extends HttpServlet {
             }
             // update Entity
             if (repository.update(user))
-                resp.getWriter().println(JsonRetranslator.toJson(repository.read(login)));
+                resp.getWriter().println(JsonTranslate.toJson(repository.read(login)));
             else throw new SQLException();
         } catch (AccountNotFoundException e){
             logger.log(Level.WARNING, e.getMessage());
@@ -104,7 +104,7 @@ public class ModifyApiHttpServlet extends HttpServlet {
             UserDAO repository = new UserDAO();
             User user = repository.read(login);
             if (repository.delete(user))
-                resp.getWriter().println(JsonRetranslator.toJson(user));
+                resp.getWriter().println(JsonTranslate.toJson(user));
             else throw new SQLException();
         } catch (AccountNotFoundException e){
             logger.log(Level.WARNING, e.getMessage());
