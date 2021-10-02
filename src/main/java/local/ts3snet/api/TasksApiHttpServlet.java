@@ -54,6 +54,7 @@ public class TasksApiHttpServlet extends HttpServlet {
             List<User> list = repository.readAll();
             List<User> result = new LinkedList<>();
             switch (paths[1]) {
+                // test 1 | get all users where user.age > 20
                 case "1": {
                     list.stream()
                             .filter(u -> u.getAge() > 20)
@@ -61,6 +62,7 @@ public class TasksApiHttpServlet extends HttpServlet {
                     resp.getWriter().println(JsonRetranslator.toJson(result));
                     break;
                 }
+                // test 1 | get all users where user.lastname is en
                 case "2": {
                     list.stream()
                             .filter(u -> u.getLastname().endsWith("en"))

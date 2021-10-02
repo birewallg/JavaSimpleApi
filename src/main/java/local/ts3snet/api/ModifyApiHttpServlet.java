@@ -1,6 +1,5 @@
 package local.ts3snet.api;
 
-import com.google.gson.Gson;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
