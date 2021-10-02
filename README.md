@@ -1,19 +1,24 @@
 # Http Api
 
-- Create database
-    HEAD/app/api/new
-- Create user
-    GET/api/new/{login}?name=string&date=long&age=int
-- Show users 
-    GET/app/api/users 
-    GET/app/api/users/{login}
-- Edit user metadata 
-    GET/api/edit/{login}?name=string&date=long&age=int 
-- Delete user from database 
-    DELETE/api/edit/{login}
+1) Create database
+   - OPTIONS /app/api/new
+2) Create user
+   - GET /api/new/{login}?name=string&date=long&age=int
+3) Show users 
+   - GET /app/api/users 
+   - GET /app/api/users/{login}
+4) Edit user data 
+   - GET /api/edit/{login}?name=string&date=long&age=int 
+5) Delete user from database 
+   - DELETE /api/edit/{login}
+
+
+### Test tasks
+    Get all users where user.age > 20
+    GET /api/task/1
     
-
-
+    Get all users where user.lastname ands with 'en'
+    GET /api/task/2
 
 
 
